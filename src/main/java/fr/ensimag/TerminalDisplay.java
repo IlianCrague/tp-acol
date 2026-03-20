@@ -141,7 +141,6 @@ public class TerminalDisplay {
             }
             System.out.println();
         }
-        //input.prompt();
         clean();
     }
 
