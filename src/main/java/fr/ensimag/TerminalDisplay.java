@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import java.util.Arrays;
+import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -151,6 +152,7 @@ public class TerminalDisplay {
     }
 
     public static class Input {
+        private static final Scanner SCANNER = new Scanner(System.in);
         private final String prompt;
         private final Function<String, String> predicate;
 
@@ -160,7 +162,9 @@ public class TerminalDisplay {
          */
         public Input(String prompt, Function<String, String> predicate) {
             // prompts should not be multiline to avoid shifting the printed game
-            if (prompt.contains("\n")) throw new IllegalArgumentException("Prompt cannot contain newline characters.");
+            if (prompt != null && prompt.contains("\n")) {
+                throw new IllegalArgumentException("Prompt cannot contain newline characters.");
+            }
             this.prompt = prompt;
             this.predicate = predicate;
         }
@@ -172,19 +176,36 @@ public class TerminalDisplay {
         public void prompt() {
             if (prompt == null && predicate == null) {
                 System.out.println("> Press Enter to continue...");
-                System.console().readLine();
+                readLine();
                 return;
             }
 
             while (true) {
-                System.out.print((prompt == null ? "" : "> ") + prompt + " ");
-                String userInput = System.console().readLine();
+                if (prompt != null) {
+                    System.out.print("> " + prompt + " ");
+                }
+                String userInput = readLine();
+                if (userInput == null) {
+                    System.err.println("No input available (EOF). Skipping prompt.");
+                    return;
+                }
                 if (predicate == null) return;
 
                 String errorMessage = predicate.apply(userInput);
                 if (errorMessage == null) return; // Input is valid
                 System.err.println("Invalid input: " + errorMessage);
             }
+        }
+
+        private static String readLine() {
+            if (System.console() != null) {
+                String line = System.console().readLine();
+                return line;
+            }
+            if (SCANNER.hasNextLine()) {
+                return SCANNER.nextLine();
+            }
+            return null;
         }
 
         /**
