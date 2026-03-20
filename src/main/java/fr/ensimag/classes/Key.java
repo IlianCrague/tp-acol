@@ -1,5 +1,6 @@
 package fr.ensimag.classes;
 
+import fr.ensimag.TerminalDisplay;
 import lombok.Getter;
 
 public class Key extends Item {
@@ -12,6 +13,14 @@ public class Key extends Item {
     public Key(String name, String icon, int x, int y, int id) {
         super(name, icon, x, y);
         this.id = id;
+    }
+
+    public Key(int id, int x, int y) {
+        this("Key", "k", x, y, id);
+    }
+
+    public void display(TerminalDisplay display, int x, int y) {
+        display.write(getIcon(), x + getX(), y + getY());
     }
 
 }
