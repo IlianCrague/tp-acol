@@ -34,6 +34,9 @@ dependencies {
 
     testCompileOnly("org.projectlombok:lombok:1.18.44")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.44")
+
+    implementation("org.yaml:snakeyaml:2.6")
+    implementation("org.jline:jline:3.26.1")
 }
 
 application {

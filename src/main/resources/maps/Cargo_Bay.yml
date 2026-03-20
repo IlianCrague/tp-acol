@@ -1,0 +1,13 @@
+name: Cargo Bay
+
+dimensions:
+  width: 80
+  height: 40
+
+background: >
+  #####
+  #   #
+  #   #
+  #####
+
+elements: [ ]
