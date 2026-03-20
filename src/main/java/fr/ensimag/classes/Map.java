@@ -1,13 +1,15 @@
 package fr.ensimag.classes;
 
 import fr.ensimag.Displayable;
+import fr.ensimag.TerminalDisplay;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Map {
+public class Map implements Displayable {
+
 	private final ArrayList<Displayable> elements;
 
 	public Map() {
@@ -28,5 +30,11 @@ public class Map {
 
 	public int size() {
 		return elements.size();
+	}
+
+	public void display(TerminalDisplay display, int x, int y) {
+		for (Displayable element : elements) {
+			element.display(display, x, y);
+		}
 	}
 }
