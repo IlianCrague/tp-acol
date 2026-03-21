@@ -6,23 +6,14 @@ import fr.ensimag.tpacol.TerminalDisplay;
 import fr.ensimag.tpacol.classes.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.yaml.snakeyaml.TypeDescription;
 
-import java.beans.Transient;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class GameState implements Displayable {
     @Getter
     @Setter
-    private ArrayList<Item> playerInventory = new ArrayList<>();
-
-    @Getter
-    @Setter
-    private Position playerPosition = new Position("Cargo_Bay", 0, 0);
-
-    @Getter(onMethod_ = @Transient)
-    @Setter
-    private transient Player player = new Player("Player");
+    private Player player = new Player("Player");
 
     public GameState() {
         // Required by SnakeYAML JavaBean constructor
@@ -33,12 +24,19 @@ public class GameState implements Displayable {
     }
 
     public static GameState load(String file) throws IOException {
+        TypeDescription playerType = new TypeDescription(Player.class);
+        playerType.addPropertyParameters("inventory", Item.class);
+
+        TypeDescription keyType = new TypeDescription(Key.class, "!key");
+        TypeDescription weaponType = new TypeDescription(Weapon.class, "!weapon");
+
         return Serialization.load(
                 file,
                 GameState.class,
                 true,
-                java.util.Map.of("playerInventory", Item.class),
-                java.util.Map.of(Key.class, "!key", Weapon.class, "!weapon")
+                playerType,
+                keyType,
+                weaponType
         );
     }
 
@@ -51,16 +49,16 @@ public class GameState implements Displayable {
     }
 
     public Map getCurrentMap() {
-        return playerPosition.getLoadedMap();
+        return player.getPosition().getLoadedMap();
     }
 
     @Override
     public void display(TerminalDisplay display, int x, int y) {
         Map currentMap = getCurrentMap();
         currentMap.display(display, x, y);
-        for (Item item : playerInventory) {
+        for (Item item : player.getInventory()) {
             item.display(display, x + item.getX(), y + item.getY());
         }
-        player.display(display, x + playerPosition.getX(), y + playerPosition.getY());
+        player.display(display, x, y);
     }
 }

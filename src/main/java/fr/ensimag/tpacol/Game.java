@@ -114,6 +114,16 @@ public class Game {
         currentMap.addElement(key);
         currentMap.addElement(npc);
 
+        Thread saveOnShutdown = new Thread(() -> {
+            try {
+                System.out.println("Saving game...");
+                gameState.save();
+            } catch (IOException e) {
+                System.err.println("Failed to save game on shutdown: " + e.getMessage());
+            }
+        });
+        Runtime.getRuntime().addShutdownHook(saveOnShutdown);
+
         boolean running = true;
         boolean needsDisplay = true;
 
@@ -132,22 +142,22 @@ public class Game {
                 switch (ch) {
                     case 'z':
                     case 'A':
-                        gameState.getPlayerPosition().addY(-1);
+                        gameState.getPlayer().getPosition().addY(-1);
                         needsDisplay = true;
                         break;
                     case 's':
                     case 'B':
-                        gameState.getPlayerPosition().addY(1);
+                        gameState.getPlayer().getPosition().addY(1);
                         needsDisplay = true;
                         break;
                     case 'q':
                     case 'D':
-                        gameState.getPlayerPosition().addX(-1);
+                        gameState.getPlayer().getPosition().addX(-1);
                         needsDisplay = true;
                         break;
                     case 'd':
                     case 'C':
-                        gameState.getPlayerPosition().addX(1);
+                        gameState.getPlayer().getPosition().addX(1);
                         needsDisplay = true;
                         break;
                     case 'x':
@@ -173,6 +183,11 @@ public class Game {
 
         }
 
+        try {
+            Runtime.getRuntime().removeShutdownHook(saveOnShutdown);
+        } catch (IllegalStateException ignored) {
+            // JVM is already shutting down (e.g. Ctrl+C), hook is executing there.
+        }
         terminal.close();
     }
 }

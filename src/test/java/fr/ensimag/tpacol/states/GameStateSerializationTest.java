@@ -21,44 +21,48 @@ class GameStateSerializationTest {
     void loadParsesInventoryAndPosition() throws Exception {
         Path stateFile = tempDir.resolve("state.yml");
         Files.writeString(stateFile, """
-                playerInventory:
-                  - !key
-                    name: Access Key
-                    id: 7
-                    x: 3
-                    y: 4
-                  - !weapon
-                    name: Blade
-                    hitPoint: 21
-                    x: 1
-                    y: 2
-                playerPosition:
-                  map: Cargo_Bay
-                  x: 10
-                  y: 11
+                player:
+                  name: Hero
+                  icon: '@'
+                  inventory:
+                    - !key
+                      name: Access Key
+                      id: 7
+                      x: 3
+                      y: 4
+                    - !weapon
+                      name: Blade
+                      hitPoint: 21
+                      x: 1
+                      y: 2
+                  position:
+                    map: Cargo_Bay
+                    x: 10
+                    y: 11
                 """);
 
         GameState gameState = GameState.load(stateFile.toString());
 
-        assertEquals(2, gameState.getPlayerInventory().size());
-        Key key = assertInstanceOf(Key.class, gameState.getPlayerInventory().get(0));
+        assertEquals(2, gameState.getPlayer().getInventory().size());
+        Key key = assertInstanceOf(Key.class, gameState.getPlayer().getInventory().get(0));
         assertEquals(7, key.getId());
 
-        Weapon weapon = assertInstanceOf(Weapon.class, gameState.getPlayerInventory().get(1));
+        Weapon weapon = assertInstanceOf(Weapon.class, gameState.getPlayer().getInventory().get(1));
         assertEquals(21, weapon.getHitPoint());
 
-        assertEquals("Cargo_Bay", gameState.getPlayerPosition().getMap());
-        assertEquals(10, gameState.getPlayerPosition().getX());
-        assertEquals(11, gameState.getPlayerPosition().getY());
+        assertEquals("Cargo_Bay", gameState.getPlayer().getPosition().getMap());
+        assertEquals(10, gameState.getPlayer().getPosition().getX());
+        assertEquals(11, gameState.getPlayer().getPosition().getY());
     }
 
     @Test
     void loadFailsWhenTypeIsUnsupported() throws Exception {
         Path stateFile = tempDir.resolve("state-invalid.yml");
         Files.writeString(stateFile, """
-                playerInventory:
-                  - !potion
-                    name: Healing Potion
+                player:
+                  inventory:
+                    - !potion
+                      name: Healing Potion
                 """);
 
         IOException error = assertThrows(IOException.class, () -> GameState.load(stateFile.toString()));
@@ -73,18 +77,18 @@ class GameStateSerializationTest {
         ArrayList<fr.ensimag.tpacol.classes.Item> inventory = new ArrayList<>();
         inventory.add(new Key("Access", "k", 2, 3, 11));
         inventory.add(new Weapon("Blade", "!", 4, 5, 9));
-        state.setPlayerInventory(inventory);
-        state.setPlayerPosition(new Position("Cargo_Bay", 7, 8));
+        state.getPlayer().setInventory(inventory);
+        state.getPlayer().setPosition(new Position("Cargo_Bay", 7, 8));
 
         state.save(stateFile.toString());
 
         GameState loaded = GameState.load(stateFile.toString());
-        assertEquals(2, loaded.getPlayerInventory().size());
-        assertEquals(11, assertInstanceOf(Key.class, loaded.getPlayerInventory().get(0)).getId());
-        assertEquals(9, assertInstanceOf(Weapon.class, loaded.getPlayerInventory().get(1)).getHitPoint());
-        assertEquals("Cargo_Bay", loaded.getPlayerPosition().getMap());
-        assertEquals(7, loaded.getPlayerPosition().getX());
-        assertEquals(8, loaded.getPlayerPosition().getY());
+        assertEquals(2, loaded.getPlayer().getInventory().size());
+        assertEquals(11, assertInstanceOf(Key.class, loaded.getPlayer().getInventory().get(0)).getId());
+        assertEquals(9, assertInstanceOf(Weapon.class, loaded.getPlayer().getInventory().get(1)).getHitPoint());
+        assertEquals("Cargo_Bay", loaded.getPlayer().getPosition().getMap());
+        assertEquals(7, loaded.getPlayer().getPosition().getX());
+        assertEquals(8, loaded.getPlayer().getPosition().getY());
     }
 }
 
