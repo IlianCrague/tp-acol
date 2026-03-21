@@ -1,6 +1,6 @@
-package fr.ensimag.classes;
+package fr.ensimag.tpacol.classes;
 
-import fr.ensimag.TerminalDisplay;
+import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
 
 public class Key extends Item {

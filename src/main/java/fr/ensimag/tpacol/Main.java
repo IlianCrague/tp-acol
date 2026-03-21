@@ -1,4 +1,4 @@
-package fr.ensimag;
+package fr.ensimag.tpacol;
 
 public class Main {
     public static void main(String[] args) throws Exception {

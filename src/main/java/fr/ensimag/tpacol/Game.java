@@ -1,6 +1,6 @@
-package fr.ensimag;
+package fr.ensimag.tpacol;
 
-import fr.ensimag.classes.*;
+import fr.ensimag.tpacol.classes.*;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;

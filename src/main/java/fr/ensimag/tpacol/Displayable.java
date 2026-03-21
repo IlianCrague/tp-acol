@@ -1,4 +1,4 @@
-package fr.ensimag;
+package fr.ensimag.tpacol;
 
 
 public interface Displayable {

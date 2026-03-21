@@ -1,6 +1,6 @@
-package fr.ensimag.states;
+package fr.ensimag.tpacol.states;
 
-import fr.ensimag.classes.Item;
+import fr.ensimag.tpacol.classes.Item;
 import lombok.Getter;
 
 import java.util.ArrayList;

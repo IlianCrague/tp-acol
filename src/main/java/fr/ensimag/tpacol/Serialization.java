@@ -1,4 +1,4 @@
-package fr.ensimag;
+package fr.ensimag.tpacol;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package fr.ensimag;
+package fr.ensimag.tpacol;
 
 import lombok.Getter;
 import lombok.NonNull;

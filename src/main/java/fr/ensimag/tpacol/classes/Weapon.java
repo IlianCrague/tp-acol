@@ -1,7 +1,7 @@
-package fr.ensimag.classes;
+package fr.ensimag.tpacol.classes;
 
-import fr.ensimag.Displayable;
-import fr.ensimag.TerminalDisplay;
+import fr.ensimag.tpacol.Displayable;
+import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
 
 public class Weapon extends Item implements Displayable {

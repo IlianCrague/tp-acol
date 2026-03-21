@@ -4,7 +4,7 @@ plugins {
     id("com.gradleup.shadow") version "9.3.0"
 }
 
-group = "fr.ensimag"
+group = "fr.ensimag.tpacol"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -40,7 +40,7 @@ dependencies {
 }
 
 application {
-    mainClass = "fr.ensimag.Main"
+    mainClass = "fr.ensimag.tpacol.Main"
 }
 
 tasks.test {
