@@ -1,10 +1,18 @@
 playerInventory:
-  - type: key
+  - !key
     name: Key of Kong
-  - type: weapon
+    icon: k
+    id: 1
+    x: 0
+    y: 0
+  - !weapon
     name: Small Dagger
+    icon: '!'
+    hitPoint: 12
+    x: 0
+    y: 0
 
 playerPosition:
-  mapId: 0
+  map: Cargo_Bay
   x: 0
   y: 0

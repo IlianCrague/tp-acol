@@ -1,20 +1,32 @@
 package fr.ensimag.tpacol;
 
-import fr.ensimag.tpacol.classes.*;
+import fr.ensimag.tpacol.classes.Door;
+import fr.ensimag.tpacol.classes.Key;
+import fr.ensimag.tpacol.classes.Map;
+import fr.ensimag.tpacol.classes.NPC;
+import fr.ensimag.tpacol.states.GameState;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 
+import java.io.IOException;
 import java.io.Reader;
 
 public class Game {
 
     private final TerminalDisplay display;
-    private Inventory playerInventory = new Inventory();
-    private Player player;
+    private final GameState gameState;
+    private final Map currentMap;
 
     public Game(TerminalDisplay display) {
         this.display = display;
+
+        try {
+            this.gameState = GameState.load();
+            this.currentMap = gameState.getCurrentMap();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /*private String buildTeleportPrompt(List<Displayable> teleportTargets) {
@@ -94,22 +106,13 @@ public class Game {
         Terminal terminal = TerminalBuilder.builder().system(true).build();
         Reader reader = terminal.reader();
 
-        var w1 = new Weapon("Sword", "😂", 0, 0, 10);
-        var w2 = new Weapon("Spear", "🐛", 0, 0, 20);
-
-        player = new Player("Hero", "@", 8, 11);
-
         var door = new Door(1, 30, 6);
         var key = new Key(1, 12, 8);
         var npc = new NPC("Merchant", "M", 22, 10);
 
-        playerInventory.addItem(w1);
-        playerInventory.addItem(w2);
-
-        Map gameMap = new Map();
-        gameMap.addElement(door);
-        gameMap.addElement(key);
-        gameMap.addElement(npc);
+        currentMap.addElement(door);
+        currentMap.addElement(key);
+        currentMap.addElement(npc);
 
         boolean running = true;
         boolean needsDisplay = true;
@@ -121,25 +124,35 @@ public class Game {
             if (reader.ready()) {
                 int ch = reader.read();
 
+                // Arrow keys usually come as ESC [ A/B/C/D; keep only the direction char.
+                if (ch == 27 && reader.ready() && reader.read() == '[' && reader.ready()) {
+                    ch = reader.read();
+                }
+
                 switch (ch) {
                     case 'z':
-                        player.setY(player.getY() - 1);
+                    case 'A':
+                        gameState.getPlayerPosition().addY(-1);
                         needsDisplay = true;
                         break;
                     case 's':
-                        player.setY(player.getY() + 1);
+                    case 'B':
+                        gameState.getPlayerPosition().addY(1);
                         needsDisplay = true;
                         break;
                     case 'q':
-                        player.setX(player.getX() - 1);
+                    case 'D':
+                        gameState.getPlayerPosition().addX(-1);
                         needsDisplay = true;
                         break;
                     case 'd':
-                        player.setX(player.getX() + 1);
+                    case 'C':
+                        gameState.getPlayerPosition().addX(1);
                         needsDisplay = true;
                         break;
                     case 'x':
                         running = false;
+                        gameState.save();
                         break; // quitter
                 }
             }
@@ -149,10 +162,7 @@ public class Game {
                 terminal.puts(InfoCmp.Capability.clear_screen);
                 terminal.flush();
 
-                display.draw_rectangle(1, 1, 38, 18, false);
-                display.write("Dungeon map", 3, 2);
-                gameMap.display(display, 0, 0);
-                player.display(display, 0, 0);
+                gameState.display(display, 0, 0);
 
                 display.render();
 

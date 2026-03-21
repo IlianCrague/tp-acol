@@ -3,10 +3,16 @@ package fr.ensimag.tpacol.classes;
 import fr.ensimag.tpacol.Displayable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
+import lombok.Setter;
 
 public class Weapon extends Item implements Displayable {
     @Getter
-    private final int hitPoint;
+    @Setter
+    private int hitPoint;
+
+    public Weapon() {
+        super();
+    }
 
     public Weapon(String name, String icon, int x, int y, int hitPoint) {
         super(name, icon, x, y);

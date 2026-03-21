@@ -3,24 +3,33 @@ package fr.ensimag.tpacol.classes;
 import fr.ensimag.tpacol.Displayable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
+import lombok.Setter;
 
 public abstract class Item implements Displayable {
     @Getter
-    private final String name;
+    @Setter
+    private String name;
 
     /**
      * emoji to display the weapon
      */
     @Getter
-    private final String icon;
+    @Setter
+    private String icon;
 
     /**
      * absolute position on map/terminal
      */
     @Getter
-    private final int x;
+    @Setter
+    private int x;
     @Getter
-    private final int y;
+    @Setter
+    private int y;
+
+    protected Item() {
+        // Required by SnakeYAML when using JavaBean construction
+    }
 
 
     public Item(String name, String icon, int x, int y) {
