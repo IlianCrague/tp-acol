@@ -18,3 +18,4 @@ player:
     map: Cargo_Bay
     x: 0
     y: 0
+  maxHP: 200

@@ -25,17 +25,22 @@ public class Player implements Displayable {
 	@Setter
 	private ArrayList<Item> inventory = new ArrayList<>();
 
+	@Getter
+	@Setter
+	private int maxHP;
+
 	public Player() {
 		// Required by SnakeYAML JavaBean construction
 	}
 
-	public Player(String name, String icon) {
+	public Player(String name, String icon, int maxHP) {
 		this.name = name;
 		this.icon = icon;
+		this.maxHP = maxHP;
 	}
 
-	public Player(String name) {
-		this(name, "@");
+	public Player(String name, int maxHP) {
+		this(name, "@", maxHP);
 	}
 
 	public void display(TerminalDisplay display, int x, int y) {

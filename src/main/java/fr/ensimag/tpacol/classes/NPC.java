@@ -20,15 +20,19 @@ public class NPC implements Displayable {
 	@Setter
 	private int y;
 
-	public NPC(String name, String icon, int x, int y) {
+	@Getter
+	private final int maxHP;
+
+	public NPC(String name, String icon, int x, int y, int maxHP) {
 		this.name = name;
 		this.icon = icon;
 		this.x = x;
 		this.y = y;
+		this.maxHP = maxHP;
 	}
 
-	public NPC(String name, int x, int y) {
-		this(name, "N", x, y);
+	public NPC(String name, int x, int y, int hp) {
+		this(name, "N", x, y, hp);
 	}
 
 	public void display(TerminalDisplay display, int x, int y) {

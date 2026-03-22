@@ -1,9 +1,6 @@
 package fr.ensimag.tpacol;
 
-import fr.ensimag.tpacol.classes.Door;
-import fr.ensimag.tpacol.classes.Key;
-import fr.ensimag.tpacol.classes.Map;
-import fr.ensimag.tpacol.classes.NPC;
+import fr.ensimag.tpacol.classes.*;
 import fr.ensimag.tpacol.states.GameState;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -108,7 +105,7 @@ public class Game {
 
         var door = new Door(1, 30, 6);
         var key = new Key(1, 12, 8);
-        var npc = new NPC("Merchant", "M", 22, 10);
+        var npc = new NPC("Merchant", "M", 22, 10, 100);
 
         currentMap.addElement(door);
         currentMap.addElement(key);
@@ -129,6 +126,10 @@ public class Game {
 
         // BOUCLE DE JEU
         while (running) {
+
+            //fight test
+            var testFight = new Fight(gameState.getPlayer(), npc);
+            testFight.handleFight(display);
 
             // INPUT NON BLOQUANT
             if (reader.ready()) {
@@ -169,8 +170,8 @@ public class Game {
 
             // RENDER
             if (needsDisplay) {
-                terminal.puts(InfoCmp.Capability.clear_screen);
-                terminal.flush();
+                //terminal.puts(InfoCmp.Capability.clear_screen);
+                //terminal.flush();
 
                 gameState.display(display, 0, 0);
 
@@ -188,6 +189,6 @@ public class Game {
         } catch (IllegalStateException ignored) {
             // JVM is already shutting down (e.g. Ctrl+C), hook is executing there.
         }
-        terminal.close();
+        //terminal.close();
     }
 }

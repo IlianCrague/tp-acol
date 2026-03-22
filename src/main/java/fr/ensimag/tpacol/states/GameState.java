@@ -13,7 +13,7 @@ import java.io.IOException;
 public class GameState implements Displayable {
     @Getter
     @Setter
-    private Player player = new Player("Player");
+    private Player player = new Player("Player", 100);
 
     public GameState() {
         // Required by SnakeYAML JavaBean constructor
