@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 public abstract class Item implements Displayable, Teleportable  {
+    private static final String ANSI_YELLOW = "\u001B[33m";
+
     @Getter
     @Setter
     private String name;
@@ -41,6 +43,16 @@ public abstract class Item implements Displayable, Teleportable  {
     }
 
     public void display(TerminalDisplay display, int x, int y) {
+        display.write(colorize(icon), x + this.x, y + this.y);
+    }
 
+    @Override
+    public String getTeleportColor() {
+        return ANSI_YELLOW;
+    }
+
+    @Override
+    public String getTeleportLabel() {
+        return name;
     }
 }

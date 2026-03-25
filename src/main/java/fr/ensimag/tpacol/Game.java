@@ -26,16 +26,20 @@ public class Game {
         }
     }
 
+    private NPC findFirstNpc() {
+        for (Displayable element : currentMap.getElements()) {
+            if (element instanceof NPC npc) {
+                return npc;
+            }
+        }
+        return null;
+    }
+
     private String buildTeleportPrompt(List<Teleportable> teleportTargets) {
         StringBuilder promptBuilder = new StringBuilder("Teleport: ");
         for (int i = 0; i < teleportTargets.size(); i++) {
             Teleportable target = teleportTargets.get(i);
-            String label = target.getClass().getSimpleName();
-            if (target instanceof Item item) {
-                label = item.getName();
-            } else if (target instanceof NPC npc) {
-                label = npc.getName();
-            }
+            String label = target.colorize(target.getTeleportLabel());
             if (i > 0) {
                 promptBuilder.append(", ");
             }
@@ -44,8 +48,38 @@ public class Game {
         if (!teleportTargets.isEmpty()) {
             promptBuilder.append(", ");
         }
-        promptBuilder.append("q=quit, Enter=stay");
+        promptBuilder.append("i=inventory, q=quit, Enter=stay");
         return promptBuilder.toString();
+    }
+
+    private void renderInventoryOverlay(Player player) {
+        List<String> lines = new ArrayList<>();
+        lines.add("Inventory");
+
+        if (player.getInventory().isEmpty()) {
+            lines.add("(empty)");
+        } else {
+            for (int i = 0; i < player.getInventory().size(); i++) {
+                Item item = player.getInventory().get(i);
+                String name = item.getName() == null || item.getName().isBlank() ? item.getClass().getSimpleName() : item.getName();
+                lines.add((i + 1) + ". " + item.colorize(item.getIcon()) + " " + name);
+            }
+        }
+
+        int contentWidth = 0;
+        for (String line : lines) {
+            contentWidth = Math.max(contentWidth, TerminalDisplay.getStringWidth(line));
+        }
+
+        int width = contentWidth + 2;
+        int height = lines.size() + 2;
+        int x = 1;
+        int y = 1;
+
+        display.draw_rectangle(x, y, width, height, true);
+        for (int i = 0; i < lines.size(); i++) {
+            display.write(lines.get(i), x + 1, y + 1 + i);
+        }
     }
 
     private List<Teleportable> buildTeleportTargets() {
@@ -98,14 +132,7 @@ public class Game {
     public void run() throws Exception {
 
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
-
-        var door = new Door(1, 30, 6);
-        var key = new Key(1, 12, 8);
-        var npc = new NPC("Merchant", "M", 22, 10, 100);
-
-        currentMap.addElement(door);
-        currentMap.addElement(key);
-        currentMap.addElement(npc);
+        NPC npc = findFirstNpc();
 
         Thread saveOnShutdown = new Thread(() -> {
             try {
@@ -118,15 +145,23 @@ public class Game {
         Runtime.getRuntime().addShutdownHook(saveOnShutdown);
 
         boolean running = true;
+        boolean showInventory = false;
 
         // BOUCLE DE JEU
         while (running) {
 
-            //fight test
-            var testFight = new Fight(gameState.getPlayer(), npc);
-            testFight.handleFight(display);
+            // Fight test uses the first NPC loaded from map data.
+            if (npc != null) {
+                var testFight = new Fight(gameState.getPlayer(), npc);
+                testFight.handleFight(display);
+            }
 
             gameState.display(display, 0, 0);
+
+            if (showInventory) {
+                renderInventoryOverlay(gameState.getPlayer());
+            }
+
             display.render();
 
             List<Teleportable> teleportTargets = buildTeleportTargets();
@@ -136,6 +171,12 @@ public class Game {
             if (input == null) {
                 running = false;
                 break;
+            }
+
+            String normalized = input.trim().toLowerCase();
+            if (normalized.equals("i")) {
+                showInventory = !showInventory;
+                continue;
             }
 
             boolean[] quitRequested = new boolean[]{false};

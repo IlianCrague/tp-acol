@@ -7,11 +7,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class NPC implements Displayable, Teleportable {
-	@Getter
-	private final String name;
+	private static final String ANSI_MAGENTA = "\u001B[35m";
 
 	@Getter
-	private final String icon;
+	@Setter
+	private String name;
+
+	@Getter
+	@Setter
+	private String icon;
 
 	@Getter
 	@Setter
@@ -22,7 +26,13 @@ public class NPC implements Displayable, Teleportable {
 	private int y;
 
 	@Getter
-	private final int maxHP;
+	@Setter
+	private int maxHP;
+
+	public NPC() {
+		// Required by SnakeYAML JavaBean construction
+		this.icon = "N";
+	}
 
 	public NPC(String name, String icon, int x, int y, int maxHP) {
 		this.name = name;
@@ -37,6 +47,16 @@ public class NPC implements Displayable, Teleportable {
 	}
 
 	public void display(TerminalDisplay display, int x, int y) {
-		display.write(icon, x + this.x, y + this.y);
+		display.write(colorize(icon), x + this.x, y + this.y);
+	}
+
+	@Override
+	public String getTeleportColor() {
+		return ANSI_MAGENTA;
+	}
+
+	@Override
+	public String getTeleportLabel() {
+		return name;
 	}
 }

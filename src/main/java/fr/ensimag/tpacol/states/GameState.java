@@ -56,9 +56,6 @@ public class GameState implements Displayable {
     public void display(TerminalDisplay display, int x, int y) {
         Map currentMap = getCurrentMap();
         currentMap.display(display, x, y);
-        for (Item item : player.getInventory()) {
-            item.display(display, x + item.getX(), y + item.getY());
-        }
         player.display(display, x, y);
     }
 }

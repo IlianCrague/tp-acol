@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class TerminalDisplay {
+    private static final String ANSI_RESET = "\u001B[0m";
     private final String[][] buffer;
     @Getter
     @Setter
@@ -32,6 +33,12 @@ public class TerminalDisplay {
     public static int getStringWidth(String string) {
         int width = 0;
         for (int i = 0; i < string.length(); ) {
+            int ansiEnd = findAnsiEnd(string, i);
+            if (ansiEnd != -1) {
+                i = ansiEnd;
+                continue;
+            }
+
             int codePoint = string.codePointAt(i);
 
             // Most standard emojis and wide characters have a code point > 0xFFFF.
@@ -47,10 +54,53 @@ public class TerminalDisplay {
         return width;
     }
 
+    private static int findAnsiEnd(String string, int startIndex) {
+        if (startIndex + 2 >= string.length()) {
+            return -1;
+        }
+        if (string.charAt(startIndex) != '\u001B' || string.charAt(startIndex + 1) != '[') {
+            return -1;
+        }
+
+        int i = startIndex + 2;
+        while (i < string.length()) {
+            char c = string.charAt(i);
+            if (c == 'm') {
+                return i + 1;
+            }
+            if (!Character.isDigit(c) && c != ';') {
+                return -1;
+            }
+            i++;
+        }
+
+        return -1;
+    }
+
+    private static String applyStyle(String symbol, String activeStyle) {
+        if (activeStyle.isEmpty()) {
+            return symbol;
+        }
+        return activeStyle + symbol + ANSI_RESET;
+    }
+
     public void write(String string, int x, int y) {
         int currentX = x;
+        String activeStyle = "";
 
         for (int i = 0; i < string.length(); ) {
+            int ansiEnd = findAnsiEnd(string, i);
+            if (ansiEnd != -1) {
+                String ansiCode = string.substring(i, ansiEnd);
+                if (ANSI_RESET.equals(ansiCode)) {
+                    activeStyle = "";
+                } else {
+                    activeStyle += ansiCode;
+                }
+                i = ansiEnd;
+                continue;
+            }
+
             int codePoint = string.codePointAt(i);
             String symbol = new String(Character.toChars(codePoint));
 
@@ -59,7 +109,7 @@ public class TerminalDisplay {
 
             if (currentX >= 0 && currentX < buffer[0].length && y >= 0 && y < buffer.length) {
                 // 2. Place the symbol
-                buffer[y][currentX] = symbol;
+                buffer[y][currentX] = applyStyle(symbol, activeStyle);
 
                 // 3. Fill the extra visual footprint with empty strings
                 for (int w = 1; w < visualWidth; w++) {

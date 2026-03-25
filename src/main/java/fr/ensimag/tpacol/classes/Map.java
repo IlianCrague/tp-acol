@@ -8,10 +8,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Map implements Displayable {
     @Getter
@@ -27,10 +24,10 @@ public class Map implements Displayable {
     @NonNull
     private Dimensions dimensions = new Dimensions();
 
-    private final ArrayList<Displayable> elements;
+    private ArrayList<Displayable> elements = new ArrayList<>();
 
     public Map() {
-        this.elements = new ArrayList<>();
+        // Required by SnakeYAML JavaBean construction
     }
 
     public void setElements(List<Displayable> elements) {
@@ -70,10 +67,25 @@ public class Map implements Displayable {
 
     public static Map load(String id) {
         try {
-            return Serialization.load("maps/" + id, Map.class, false);
+            return Serialization.load(
+                    "maps/" + id,
+                    Map.class,
+                    false,
+                    java.util.Map.of("elements", Displayable.class),
+                    mapElementTags()
+            );
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load map: " + id, e);
         }
+    }
+
+    private static java.util.Map<Class<?>, String> mapElementTags() {
+        java.util.Map<Class<?>, String> tags = new LinkedHashMap<>();
+        tags.put(Door.class, "!door");
+        tags.put(Key.class, "!key");
+        tags.put(NPC.class, "!npc");
+        tags.put(Weapon.class, "!weapon");
+        return tags;
     }
 
     @Getter

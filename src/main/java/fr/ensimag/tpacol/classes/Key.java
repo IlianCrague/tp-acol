@@ -26,7 +26,7 @@ public class Key extends Item {
     }
 
     public void display(TerminalDisplay display, int x, int y) {
-        display.write(getIcon(), x + getX(), y + getY());
+        display.write(colorize(getIcon()), x + getX(), y + getY());
     }
 
 }

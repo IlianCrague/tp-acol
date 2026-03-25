@@ -19,7 +19,7 @@ public class Weapon extends Item {
     }
 
     public void display(TerminalDisplay display, int x, int y) {
-
+        display.write(colorize(getIcon()), x + getX(), y + getY());
     }
 
 }
