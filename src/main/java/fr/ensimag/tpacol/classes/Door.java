@@ -1,11 +1,12 @@
 package fr.ensimag.tpacol.classes;
 
 import fr.ensimag.tpacol.Displayable;
+import fr.ensimag.tpacol.Teleportable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Door implements Displayable {
+public class Door implements Displayable, Teleportable {
     /**
      * id matching with one key
      */

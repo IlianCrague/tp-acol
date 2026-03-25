@@ -1,11 +1,12 @@
 package fr.ensimag.tpacol.classes;
 
 import fr.ensimag.tpacol.Displayable;
+import fr.ensimag.tpacol.Teleportable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
 import lombok.Setter;
 
-public class NPC implements Displayable {
+public class NPC implements Displayable, Teleportable {
 	@Getter
 	private final String name;
 

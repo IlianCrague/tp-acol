@@ -91,4 +91,12 @@ public class Map implements Displayable {
             this.height = height;
         }
     }
+
+    public int getX(){
+        return -1;
+    }
+
+    public int getY(){
+        return -1;
+    }
 }

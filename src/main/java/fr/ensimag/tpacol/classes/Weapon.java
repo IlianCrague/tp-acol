@@ -1,11 +1,10 @@
 package fr.ensimag.tpacol.classes;
 
-import fr.ensimag.tpacol.Displayable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Weapon extends Item implements Displayable {
+public class Weapon extends Item {
     @Getter
     @Setter
     private int hitPoint;

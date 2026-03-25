@@ -2,12 +2,12 @@ package fr.ensimag.tpacol;
 
 import fr.ensimag.tpacol.classes.*;
 import fr.ensimag.tpacol.states.GameState;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
-import org.jline.utils.InfoCmp;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Game {
 
@@ -26,10 +26,10 @@ public class Game {
         }
     }
 
-    /*private String buildTeleportPrompt(List<Displayable> teleportTargets) {
+    private String buildTeleportPrompt(List<Teleportable> teleportTargets) {
         StringBuilder promptBuilder = new StringBuilder("Teleport: ");
         for (int i = 0; i < teleportTargets.size(); i++) {
-            Displayable target = teleportTargets.get(i);
+            Teleportable target = teleportTargets.get(i);
             String label = target.getClass().getSimpleName();
             if (target instanceof Item item) {
                 label = item.getName();
@@ -48,9 +48,19 @@ public class Game {
         return promptBuilder.toString();
     }
 
+    private List<Teleportable> buildTeleportTargets() {
+        List<Teleportable> teleportTargets = new ArrayList<>();
+        for (Displayable element : currentMap.getElements()) {
+            if (element instanceof Teleportable teleportable) {
+                teleportTargets.add(teleportable);
+            }
+        }
+        return teleportTargets;
+    }
+
     private String handleTeleportInput(
             String input,
-            List<Displayable> teleportTargets,
+            List<Teleportable> teleportTargets,
             Player player,
             boolean[] quitRequested
     ) {
@@ -68,40 +78,26 @@ public class Game {
                 return "Choose a number between 1 and " + teleportTargets.size();
             }
 
-            Displayable selected = teleportTargets.get(choice - 1);
+            Teleportable selected = teleportTargets.get(choice - 1);
             int targetX, targetY;
 
-            if (selected instanceof Door d) {
-                targetX = d.getX();
-                targetY = d.getY();
-            } else if (selected instanceof Item i) {
-                targetX = i.getX();
-                targetY = i.getY();
-            } else if (selected instanceof Player p) {
-                targetX = p.getX();
-                targetY = p.getY();
-            } else if (selected instanceof NPC n) {
-                targetX = n.getX();
-                targetY = n.getY();
-            } else {
-                return "Invalid target";
-            }
+            targetX = selected.getX();
+            targetY = selected.getY();
 
-            player.setX(targetX - 1);
-            player.setY(targetY);
+            int destinationX = Math.max(0, targetX - 1);
+            player.getPosition().setX(destinationX);
+            player.getPosition().setY(targetY);
 
         } catch (NumberFormatException e) {
             return "Invalid input";
         }
 
         return null;
-    }*/
+    }
 
     public void run() throws Exception {
 
-        // INIT JLINE
-        Terminal terminal = TerminalBuilder.builder().system(true).build();
-        Reader reader = terminal.reader();
+        BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
 
         var door = new Door(1, 30, 6);
         var key = new Key(1, 12, 8);
@@ -122,7 +118,6 @@ public class Game {
         Runtime.getRuntime().addShutdownHook(saveOnShutdown);
 
         boolean running = true;
-        boolean needsDisplay = true;
 
         // BOUCLE DE JEU
         while (running) {
@@ -131,56 +126,31 @@ public class Game {
             var testFight = new Fight(gameState.getPlayer(), npc);
             testFight.handleFight(display);
 
-            // INPUT NON BLOQUANT
-            if (reader.ready()) {
-                int ch = reader.read();
+            gameState.display(display, 0, 0);
+            display.render();
 
-                // Arrow keys usually come as ESC [ A/B/C/D; keep only the direction char.
-                if (ch == 27 && reader.ready() && reader.read() == '[' && reader.ready()) {
-                    ch = reader.read();
-                }
+            List<Teleportable> teleportTargets = buildTeleportTargets();
+            System.out.print("> " + buildTeleportPrompt(teleportTargets) + " ");
+            String input = inputReader.readLine();
 
-                switch (ch) {
-                    case 'z':
-                    case 'A':
-                        gameState.getPlayer().getPosition().addY(-1);
-                        needsDisplay = true;
-                        break;
-                    case 's':
-                    case 'B':
-                        gameState.getPlayer().getPosition().addY(1);
-                        needsDisplay = true;
-                        break;
-                    case 'q':
-                    case 'D':
-                        gameState.getPlayer().getPosition().addX(-1);
-                        needsDisplay = true;
-                        break;
-                    case 'd':
-                    case 'C':
-                        gameState.getPlayer().getPosition().addX(1);
-                        needsDisplay = true;
-                        break;
-                    case 'x':
-                        running = false;
-                        gameState.save();
-                        break; // quitter
-                }
+            if (input == null) {
+                running = false;
+                break;
             }
 
-            // RENDER
-            if (needsDisplay) {
-                //terminal.puts(InfoCmp.Capability.clear_screen);
-                //terminal.flush();
-
-                gameState.display(display, 0, 0);
-
-                display.render();
-
-                // FPS (~60)
-                Thread.sleep(16);
-                needsDisplay = false;
+            boolean[] quitRequested = new boolean[]{false};
+            String error = handleTeleportInput(input, teleportTargets, gameState.getPlayer(), quitRequested);
+            if (error != null) {
+                System.err.println("Invalid input: " + error);
             }
+
+            if (quitRequested[0]) {
+                running = false;
+                gameState.save();
+            }
+
+            // Small pause keeps CPU usage low when idling in the loop.
+            Thread.sleep(16);
 
         }
 
@@ -189,6 +159,5 @@ public class Game {
         } catch (IllegalStateException ignored) {
             // JVM is already shutting down (e.g. Ctrl+C), hook is executing there.
         }
-        //terminal.close();
     }
 }
