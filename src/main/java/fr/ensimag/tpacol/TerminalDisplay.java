@@ -1,21 +1,10 @@
 package fr.ensimag.tpacol;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-
 import java.util.Arrays;
-import java.util.Scanner;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class TerminalDisplay {
     private static final String ANSI_RESET = "\u001B[0m";
     private final String[][] buffer;
-    @Getter
-    @Setter
-    @NonNull
-    private Input input = Input.EMPTY;
 
     public TerminalDisplay(int xSize, int ySize) {
         buffer = new String[ySize][xSize];
@@ -198,118 +187,6 @@ public class TerminalDisplay {
         for (String[] strings : buffer) {
             Arrays.fill(strings, null);
         }
-    }
-
-    public static class Input {
-        private static final Scanner SCANNER = new Scanner(System.in);
-        private final String prompt;
-        private final Function<String, String> predicate;
-
-        /**
-         * @param predicate A callback function that takes the raw user input and returns a string error message if the
-         *                  input is invalid, or null if the input is valid.
-         */
-        public Input(String prompt, Function<String, String> predicate) {
-            // prompts should not be multiline to avoid shifting the printed game
-            if (prompt != null && prompt.contains("\n")) {
-                throw new IllegalArgumentException("Prompt cannot contain newline characters.");
-            }
-            this.prompt = prompt;
-            this.predicate = predicate;
-        }
-
-        /**
-         * Prints the prompt to the terminal and waits for user input. Validates the input using the provided
-         * callback and returns the corresponding value of type T if valid.
-         */
-        public void prompt() {
-            if (prompt == null && predicate == null) {
-                System.out.println("> Press Enter to continue...");
-                readLine();
-                return;
-            }
-
-            while (true) {
-                if (prompt != null) {
-                    System.out.print("> " + prompt + " ");
-                }
-                String userInput = readLine();
-                if (userInput == null) {
-                    System.err.println("No input available (EOF). Skipping prompt.");
-                    return;
-                }
-                if (predicate == null) return;
-
-                String errorMessage = predicate.apply(userInput);
-                if (errorMessage == null) return; // Input is valid
-                System.err.println("Invalid input: " + errorMessage);
-            }
-        }
-
-        private static String readLine() {
-            if (System.console() != null) {
-                String line = System.console().readLine();
-                return line;
-            }
-            if (SCANNER.hasNextLine()) {
-                return SCANNER.nextLine();
-            }
-            return null;
-        }
-
-        /**
-         * Creates an Input instance for validating integer inputs within a specified range.
-         */
-        public static Input integer(String prompt, int min, int max, Consumer<Integer> onValid) {
-            return new Input(prompt, input -> {
-                try {
-                    int value = Integer.parseInt(input);
-                    if (value < min || value > max) {
-                        return "Input must be an integer between " + min + " and " + max + ".";
-                    }
-                    onValid.accept(value);
-                    return null; // Valid input
-                } catch (NumberFormatException e) {
-                    return e.getMessage();
-                }
-            });
-        }
-
-        /**
-         * Creates an Input instance for validating non-empty string inputs with a maximum length.
-         */
-        public static Input nonEmptyString(String prompt, int maxLength, Consumer<String> onValid) {
-            return new Input(prompt, input -> {
-                if (input.trim().isEmpty()) return "Input cannot be empty.";
-                if (input.length() > maxLength) return "Input cannot exceed " + maxLength + " characters.";
-                onValid.accept(input);
-                return null; // Valid input
-            });
-        }
-
-        /**
-         * Creates an Input instance for validating yes/no inputs, returning true for "yes" and false for "no".
-         */
-        public static Input yesNo(String prompt, Consumer<Boolean> onValid) {
-            return new Input(prompt + " (y/n)", input -> {
-                String normalized = input.trim().toLowerCase();
-                if (normalized.equals("yes") || normalized.equals("y")) {
-                    onValid.accept(true);
-                    return null; // Valid input
-                } else if (normalized.equals("no") || normalized.equals("n")) {
-                    onValid.accept(false);
-                    return null; // Valid input
-                } else {
-                    return "Input must be 'yes' or 'no'.";
-                }
-            });
-        }
-
-        /**
-         * A special Input instance that simply waits for the user to press Enter without validating any input.
-         * This can be used for "Press Enter to continue..." prompts where no actual input is required.
-         */
-        public static Input EMPTY = new Input(null, null);
     }
 
     // Small self-test to visually verify draw_rectangle variations.
