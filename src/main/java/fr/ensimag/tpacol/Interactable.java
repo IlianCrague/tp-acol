@@ -3,7 +3,7 @@ package fr.ensimag.tpacol;
 import fr.ensimag.tpacol.classes.Map;
 import fr.ensimag.tpacol.classes.Player;
 
-public interface Interactable {
+public interface Interactable extends Displayable {
     String ANSI_RESET = "\u001B[0m";
 
     int getX();

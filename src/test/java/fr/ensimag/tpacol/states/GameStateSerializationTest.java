@@ -27,16 +27,17 @@ class GameStateSerializationTest {
                   maxHearts: 3
                   hearts: 2
                   inventory:
-                    - !key
-                      name: Access Key
-                      id: 7
-                      x: 3
-                      y: 4
-                    - !weapon
-                      name: Blade
-                      hitPoint: 21
-                      x: 1
-                      y: 2
+                    items:
+                      - !key
+                        name: Access Key
+                        id: 7
+                        x: 3
+                        y: 4
+                      - !weapon
+                        name: Blade
+                        hitPoint: 21
+                        x: 1
+                        y: 2
                   position:
                     map: Cargo_Bay
                     x: 10
@@ -65,8 +66,9 @@ class GameStateSerializationTest {
         Files.writeString(stateFile, """
                 player:
                   inventory:
-                    - !potion
-                      name: Healing Potion
+                    items:
+                      - !potion
+                        name: Healing Potion
                 """);
 
         IOException error = assertThrows(IOException.class, () -> GameState.load(stateFile.toString()));

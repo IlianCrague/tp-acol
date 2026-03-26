@@ -4,9 +4,11 @@ import fr.ensimag.tpacol.Displayable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import fr.ensimag.tpacol.states.Position;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Player implements Displayable {
 	private static final String ANSI_RESET = "\u001B[0m";
@@ -27,7 +29,8 @@ public class Player implements Displayable {
 
 	@Getter
 	@Setter
-	private ArrayList<Item> inventory = new ArrayList<>();
+	@NonNull
+	private Inventory inventory = new Inventory();
 
 	@Getter
 	@Setter
@@ -54,6 +57,10 @@ public class Player implements Displayable {
 		this(name, "@");
 	}
 
+	public static Map<Class<?>, String> getClassTags() {
+		return new LinkedHashMap<>(Inventory.getClassTags());
+	}
+
 	public void moveTo(int x, int y) {
 		position.setX(x);
 		position.setY(y);
@@ -64,14 +71,10 @@ public class Player implements Displayable {
 	}
 
 	public boolean hasKey(int keyId) {
-		return inventory.stream()
+		return inventory.getItems().stream()
 				.filter(Key.class::isInstance)
 				.map(Key.class::cast)
 				.anyMatch(key -> key.getId() == keyId);
-	}
-
-	public void addToInventory(Item item) {
-		inventory.add(item);
 	}
 
 	public void teleportTo(String map, int x, int y) {
@@ -91,9 +94,7 @@ public class Player implements Displayable {
 
 	public String getHeartsHud() {
 		StringBuilder heartsBuilder = new StringBuilder();
-		for (int i = 0; i < hearts; i++) {
-			heartsBuilder.append("♥");
-		}
+		heartsBuilder.append("♥".repeat(Math.max(0, hearts)));
 
 		if (heartsBuilder.isEmpty()) {
 			heartsBuilder.append("x");

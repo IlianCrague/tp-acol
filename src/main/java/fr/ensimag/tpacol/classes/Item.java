@@ -66,7 +66,7 @@ public abstract class Item implements Displayable, Interactable {
         currentMap.removeElement(this);
         setX(0);
         setY(0);
-        player.addToInventory(this);
+        player.getInventory().addItem(this);
         return "Picked up " + getName();
     }
 }

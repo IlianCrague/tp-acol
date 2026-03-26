@@ -152,9 +152,6 @@ complet :
 Le cœur du projet s'appuie sur le polymorphisme et la ségrégation des interfaces (`Displayable` pour l'affichage,
 `Interactable` pour les actions métier).
 
-> Note: il est nécessaire d'avoir la version originale (numérique) de ce document pour zoomer sur le diagramme
-> ci-dessous.
-
  ```mermaid
 classDiagram
     direction BT

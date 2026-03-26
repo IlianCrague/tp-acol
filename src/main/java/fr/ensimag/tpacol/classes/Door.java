@@ -84,6 +84,6 @@ public class Door implements Displayable, Interactable {
         }
 
         player.teleportTo(destinationMap, destinationX, destinationY);
-        return null;
+        return "Door opened: " + destinationMap;
     }
 }

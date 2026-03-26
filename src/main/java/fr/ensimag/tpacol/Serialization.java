@@ -56,6 +56,10 @@ public class Serialization {
         return load(file, type, saveFile, descriptions);
     }
 
+    public static <T> T load(String file, Class<T> type, boolean saveFile, Map<Class<?>, String> classTags) throws IOException {
+        return load(file, type, saveFile, java.util.Map.of(), classTags);
+    }
+
     public static void save(String file, Object value, Map<Class<?>, String> classTags) throws IOException {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -66,7 +70,9 @@ public class Serialization {
             representer.addClassTag(entry.getKey(), new Tag(entry.getValue()));
         }
 
-        String out = new Yaml(representer, options).dumpAsMap(value);
+        Yaml yaml = new Yaml(representer, options);
+        yaml.setBeanAccess(BeanAccess.FIELD);
+        String out = yaml.dumpAsMap(value);
         Files.writeString(Path.of(normalizeYamlPath(file)), out);
     }
 

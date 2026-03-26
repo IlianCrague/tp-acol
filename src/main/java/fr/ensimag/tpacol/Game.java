@@ -1,7 +1,5 @@
 package fr.ensimag.tpacol;
 
-import fr.ensimag.tpacol.classes.Item;
-import fr.ensimag.tpacol.classes.Player;
 import fr.ensimag.tpacol.states.GameState;
 
 import java.io.BufferedReader;
@@ -43,36 +41,6 @@ public class Game {
         }
         promptBuilder.append("i=inventory, q=quit, Enter=stay");
         return promptBuilder.toString();
-    }
-
-    private void renderInventoryOverlay(Player player) {
-        List<String> lines = new ArrayList<>();
-        lines.add("Inventory");
-
-        if (player.getInventory().isEmpty()) {
-            lines.add("(empty)");
-        } else {
-            for (int i = 0; i < player.getInventory().size(); i++) {
-                Item item = player.getInventory().get(i);
-                String name = item.getName() == null || item.getName().isBlank() ? item.getClass().getSimpleName() : item.getName();
-                lines.add((i + 1) + ". " + item.colorize(item.getIcon()) + " " + name);
-            }
-        }
-
-        int contentWidth = 0;
-        for (String line : lines) {
-            contentWidth = Math.max(contentWidth, TerminalDisplay.getStringWidth(line));
-        }
-
-        int width = contentWidth + 2;
-        int height = lines.size() + 2;
-        int x = 1;
-        int y = 1;
-
-        display.draw_rectangle(x, y, width, height, true);
-        for (int i = 0; i < lines.size(); i++) {
-            display.write(lines.get(i), x + 1, y + 1 + i);
-        }
     }
 
     private void renderDialogOverlay(String title, String message) {
@@ -164,7 +132,7 @@ public class Game {
             gameState.display(display, 0, 0);
 
             if (showInventory) {
-                renderInventoryOverlay(gameState.getPlayer());
+                gameState.getPlayer().getInventory().display(display, 1, 1);
             }
 
             if (uiMessage != null) {

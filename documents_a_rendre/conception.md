@@ -28,8 +28,11 @@ La boucle `Game` reste simple:
 ## 3. Choix de conception
 
 - SnakeYAML JavaBean + tags (`!key`, `!door`, `!npc`, `!weapon`).
+- Les tags YAML sont declares par les classes metier concernees (`Player.getClassTags()` delegue a
+  `Inventory.getClassTags()`).
 - `Door` contient les metadonnees de transition pour eviter le hardcode.
 - `Position` reste source de verite pour map/x/y du joueur.
+- L'inventaire est un objet `Inventory` persiste sous la forme `player.inventory.items` dans `state.yml`.
 - Les interactions sont portees par `Interactable` pour limiter le couplage dans `GameState`.
 - Les coeurs sont stockes dans `Player` et affiches par le HUD de `GameState`.
 

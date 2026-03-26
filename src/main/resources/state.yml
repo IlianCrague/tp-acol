@@ -4,7 +4,8 @@ player:
   color: "\u001B[32m"
   maxHearts: 3
   hearts: 3
-  inventory: [ ]
+  inventory:
+    items: [ ]
   position:
     map: Cargo_Bay
     x: 20

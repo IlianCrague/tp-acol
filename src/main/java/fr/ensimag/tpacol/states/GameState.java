@@ -4,10 +4,10 @@ import fr.ensimag.tpacol.Displayable;
 import fr.ensimag.tpacol.Interactable;
 import fr.ensimag.tpacol.Serialization;
 import fr.ensimag.tpacol.TerminalDisplay;
-import fr.ensimag.tpacol.classes.*;
+import fr.ensimag.tpacol.classes.Map;
+import fr.ensimag.tpacol.classes.Player;
 import lombok.Getter;
 import lombok.Setter;
-import org.yaml.snakeyaml.TypeDescription;
 
 import java.io.IOException;
 
@@ -25,19 +25,11 @@ public class GameState implements Displayable {
     }
 
     public static GameState load(String file) throws IOException {
-        TypeDescription playerType = new TypeDescription(Player.class);
-        playerType.addPropertyParameters("inventory", Item.class);
-
-        TypeDescription keyType = new TypeDescription(Key.class, "!key");
-        TypeDescription weaponType = new TypeDescription(Weapon.class, "!weapon");
-
         return Serialization.load(
                 file,
                 GameState.class,
                 true,
-                playerType,
-                keyType,
-                weaponType
+                Player.getClassTags()
         );
     }
 
@@ -46,7 +38,7 @@ public class GameState implements Displayable {
     }
 
     public void save(String file) throws IOException {
-        Serialization.save(file, this, java.util.Map.of(Key.class, "!key", Weapon.class, "!weapon"));
+        Serialization.save(file, this, Player.getClassTags());
     }
 
     public Map getCurrentMap() {

@@ -24,7 +24,7 @@ public class Map implements Displayable {
     @NonNull
     private Dimensions dimensions = new Dimensions();
 
-    private ArrayList<Displayable> elements = new ArrayList<>();
+    private final ArrayList<Displayable> elements = new ArrayList<>();
 
     public Map() {
         // Required by SnakeYAML JavaBean construction
