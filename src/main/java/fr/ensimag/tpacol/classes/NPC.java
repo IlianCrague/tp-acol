@@ -25,25 +25,20 @@ public class NPC implements Displayable, Interactable {
 	@Setter
 	private int y;
 
-	@Getter
-	@Setter
-	private int maxHP;
-
 	public NPC() {
 		// Required by SnakeYAML JavaBean construction
 		this.icon = "N";
 	}
 
-	public NPC(String name, String icon, int x, int y, int maxHP) {
+	public NPC(String name, String icon, int x, int y) {
 		this.name = name;
 		this.icon = icon;
 		this.x = x;
 		this.y = y;
-		this.maxHP = maxHP;
 	}
 
-	public NPC(String name, int x, int y, int hp) {
-		this(name, "N", x, y, hp);
+	public NPC(String name, int x, int y) {
+		this(name, "N", x, y);
 	}
 
 	public void display(TerminalDisplay display, int x, int y) {
@@ -51,12 +46,22 @@ public class NPC implements Displayable, Interactable {
 	}
 
 	@Override
-	public String getTeleportColor() {
+	public String getColor() {
 		return ANSI_MAGENTA;
 	}
 
 	@Override
 	public String getTeleportLabel() {
 		return name;
+	}
+
+	@Override
+	public String interact(Player player, Map currentMap) {
+		player.moveLeftOf(getX(), getY());
+		if ("Bandit".equalsIgnoreCase(name)) {
+			int remainingHearts = player.loseHeart();
+			return "Bandit attack! Hearts left: " + remainingHearts;
+		}
+		return "You talk to " + name;
 	}
 }

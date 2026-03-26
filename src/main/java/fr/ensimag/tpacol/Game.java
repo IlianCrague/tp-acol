@@ -7,10 +7,13 @@ import fr.ensimag.tpacol.states.GameState;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
+    private static final String SAVE_FILE = "state.yml";
 
     private final TerminalDisplay display;
     private final GameState gameState;
@@ -138,8 +141,12 @@ public class Game {
 
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
 
+        final boolean[] shouldSaveOnShutdown = {true};
         Thread saveOnShutdown = new Thread(() -> {
             try {
+                if (!shouldSaveOnShutdown[0]) {
+                    return;
+                }
                 System.out.println("Saving game...");
                 gameState.save();
             } catch (IOException e) {
@@ -185,13 +192,21 @@ public class Game {
             boolean[] quitRequested = new boolean[]{false};
             uiMessage = handleTeleportInput(input, teleportTargets, quitRequested);
 
+            if (gameState.getPlayer().isDead()) {
+                gameState.display(display, 0, 0);
+                renderDialogOverlay("Game Over", "No hearts left. Save deleted.");
+                display.render();
+
+                shouldSaveOnShutdown[0] = false;
+                deleteSaveFile();
+                running = false;
+                continue;
+            }
+
             if (quitRequested[0]) {
                 running = false;
                 gameState.save();
             }
-
-            // Small pause keeps CPU usage low when idling in the loop.
-            Thread.sleep(16);
 
         }
 
@@ -199,6 +214,14 @@ public class Game {
             Runtime.getRuntime().removeShutdownHook(saveOnShutdown);
         } catch (IllegalStateException ignored) {
             // JVM is already shutting down (e.g. Ctrl+C), hook is executing there.
+        }
+    }
+
+    private void deleteSaveFile() {
+        try {
+            Files.deleteIfExists(Path.of(SAVE_FILE));
+        } catch (IOException e) {
+            System.err.println("Failed to delete save file: " + e.getMessage());
         }
     }
 }

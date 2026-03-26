@@ -2,9 +2,10 @@ player:
   name: Player
   icon: '@'
   color: "\u001B[32m"
+  maxHearts: 3
+  hearts: 3
   inventory: [ ]
   position:
     map: Cargo_Bay
     x: 20
     y: 1
-  maxHP: 100

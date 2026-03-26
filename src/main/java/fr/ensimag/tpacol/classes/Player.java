@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class Player implements Displayable {
 	private static final String ANSI_RESET = "\u001B[0m";
 	private static final String ANSI_GREEN = "\u001B[32m";
+	private static final String ANSI_RED = "\u001B[31m";
 
 	@Getter
 	@Setter
@@ -30,24 +31,27 @@ public class Player implements Displayable {
 
 	@Getter
 	@Setter
-	private int maxHP;
+	private String color = ANSI_GREEN;
 
 	@Getter
 	@Setter
-	private String color = ANSI_GREEN;
+	private int maxHearts = 3;
+
+	@Getter
+	@Setter
+	private int hearts = 3;
 
 	public Player() {
 		// Required by SnakeYAML JavaBean construction
 	}
 
-	public Player(String name, String icon, int maxHP) {
+	public Player(String name, String icon) {
 		this.name = name;
 		this.icon = icon;
-		this.maxHP = maxHP;
 	}
 
-	public Player(String name, int maxHP) {
-		this(name, "@", maxHP);
+	public Player(String name) {
+		this(name, "@");
 	}
 
 	public void moveTo(int x, int y) {
@@ -74,6 +78,28 @@ public class Player implements Displayable {
 		position.setMap(map);
 		position.setX(x);
 		position.setY(y);
+	}
+
+	public int loseHeart() {
+		hearts = Math.max(0, hearts - 1);
+		return hearts;
+	}
+
+	public boolean isDead() {
+		return hearts <= 0;
+	}
+
+	public String getHeartsHud() {
+		StringBuilder heartsBuilder = new StringBuilder();
+		for (int i = 0; i < hearts; i++) {
+			heartsBuilder.append("♥");
+		}
+
+		if (heartsBuilder.isEmpty()) {
+			heartsBuilder.append("x");
+		}
+
+		return ANSI_RED + heartsBuilder + ANSI_RESET;
 	}
 
 	public void display(TerminalDisplay display, int x, int y) {

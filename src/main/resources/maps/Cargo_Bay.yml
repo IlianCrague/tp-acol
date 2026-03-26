@@ -21,9 +21,6 @@ background: |
   │                                      │
   │  ═══════                     ═══════ │
   │                                      │
-  │      LOADING AREA                    │
-  │                                      │
-  │  EXIT                         LOCKED │
   └──────────────────────────────────────┘
 
 elements:
@@ -42,8 +39,7 @@ elements:
     x: 12
     y: 8
   - !npc
-    name: Merchant
-    icon: M
+    name: Bandit
+    icon: B
     x: 22
     y: 10
-    maxHP: 100

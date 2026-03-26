@@ -14,7 +14,7 @@ import java.io.IOException;
 public class GameState implements Displayable {
     @Getter
     @Setter
-    private Player player = new Player("Player", 100);
+    private Player player = new Player("Player");
 
     public GameState() {
         // Required by SnakeYAML JavaBean constructor
@@ -61,6 +61,12 @@ public class GameState implements Displayable {
     public void display(TerminalDisplay display, int x, int y) {
         Map currentMap = getCurrentMap();
         currentMap.display(display, x, y);
+
+        String heartsHud = player.getHeartsHud();
+        int mapWidth = currentMap.getDimensions().getWidth();
+        int heartsX = Math.max(0, mapWidth - TerminalDisplay.getStringWidth(heartsHud) - 1);
+        display.write(heartsHud, heartsX, 0);
+
         player.display(display, x, y);
     }
 }

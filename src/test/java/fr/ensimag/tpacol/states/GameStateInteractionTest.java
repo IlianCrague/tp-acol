@@ -3,6 +3,7 @@ package fr.ensimag.tpacol.states;
 import fr.ensimag.tpacol.classes.Door;
 import fr.ensimag.tpacol.classes.Key;
 import fr.ensimag.tpacol.classes.Map;
+import fr.ensimag.tpacol.classes.NPC;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,6 +75,27 @@ class GameStateInteractionTest {
         assertEquals("Engine_Room", gameState.getPlayer().getPosition().getMap());
         assertEquals(3, gameState.getPlayer().getPosition().getX());
         assertEquals(3, gameState.getPlayer().getPosition().getY());
+    }
+
+    @Test
+    void interactingWithBanditRemovesOneHeart() {
+        GameState gameState = new GameState();
+        gameState.getPlayer().setPosition(new Position("Cargo_Bay", 0, 0));
+        gameState.getPlayer().setHearts(3);
+
+        NPC bandit = gameState.getCurrentMap().getElements().stream()
+                .filter(NPC.class::isInstance)
+                .map(NPC.class::cast)
+                .filter(npc -> "Bandit".equals(npc.getName()))
+                .findFirst()
+                .orElseThrow();
+
+        String result = gameState.interactWith(bandit);
+
+        assertEquals("Bandit attack! Hearts left: 2", result);
+        assertEquals(2, gameState.getPlayer().getHearts());
+        assertEquals(21, gameState.getPlayer().getPosition().getX());
+        assertEquals(10, gameState.getPlayer().getPosition().getY());
     }
 }
 

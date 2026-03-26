@@ -9,7 +9,7 @@ public interface Interactable {
     int getX();
     int getY();
 
-    default String getTeleportColor() {
+    default String getColor() {
         return "";
     }
 
@@ -18,7 +18,7 @@ public interface Interactable {
     }
 
     default String colorize(String text) {
-        String color = getTeleportColor();
+        String color = getColor();
         if (color == null || color.isEmpty()) {
             return text;
         }

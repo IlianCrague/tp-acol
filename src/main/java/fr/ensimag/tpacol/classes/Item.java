@@ -47,7 +47,7 @@ public abstract class Item implements Displayable, Interactable {
     }
 
     @Override
-    public String getTeleportColor() {
+    public String getColor() {
         return ANSI_YELLOW;
     }
 

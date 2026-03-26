@@ -5,13 +5,15 @@
 - Joueur: controle le personnage et choisit les interactions.
 - Systeme de jeu: charge les donnees, applique les regles et affiche.
 
-## 2. Cas d'utilisation (increment)
+## 2. Cas d'utilisation
 
 - UC1: Lancer une partie.
 - UC2: Interagir avec une cle (ramassage).
 - UC3: Interagir avec une porte (verification de cle).
 - UC4: Changer de map apres ouverture.
 - UC5: Sauvegarder a la sortie.
+- UC6: Perdre des coeurs en interagissant avec le Bandit.
+- UC7: Fin de partie a 0 coeur avec suppression de sauvegarde.
 
 ## 3. Sequence systeme (UC2+UC3+UC4)
 
@@ -46,4 +48,7 @@ sequenceDiagram
 - Une porte d'id `n` s'ouvre seulement si l'inventaire contient une cle d'id `n`.
 - Une cle ramassee disparait de la map et est ajoutee a l'inventaire.
 - Une porte ouverte peut transferer vers `destinationMap`, `destinationX`, `destinationY`.
+- Le joueur commence avec 3 coeurs.
+- Une interaction avec `Bandit` retire 1 coeur.
+- A 0 coeur, la partie s'arrete et `state.yml` est supprime.
 

@@ -62,7 +62,7 @@ public class Door implements Displayable, Interactable {
     }
 
     @Override
-    public String getTeleportColor() {
+    public String getColor() {
         return ANSI_CYAN;
     }
 
@@ -84,6 +84,6 @@ public class Door implements Displayable, Interactable {
         }
 
         player.teleportTo(destinationMap, destinationX, destinationY);
-        return "Door opened: " + destinationMap;
+        return null;
     }
 }

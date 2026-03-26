@@ -24,6 +24,8 @@ class GameStateSerializationTest {
                 player:
                   name: Hero
                   icon: '@'
+                  maxHearts: 3
+                  hearts: 2
                   inventory:
                     - !key
                       name: Access Key
@@ -53,6 +55,8 @@ class GameStateSerializationTest {
         assertEquals("Cargo_Bay", gameState.getPlayer().getPosition().getMap());
         assertEquals(10, gameState.getPlayer().getPosition().getX());
         assertEquals(11, gameState.getPlayer().getPosition().getY());
+        assertEquals(3, gameState.getPlayer().getMaxHearts());
+        assertEquals(2, gameState.getPlayer().getHearts());
     }
 
     @Test
@@ -79,6 +83,8 @@ class GameStateSerializationTest {
         inventory.add(new Weapon("Blade", "!", 4, 5, 9));
         state.getPlayer().setInventory(inventory);
         state.getPlayer().setPosition(new Position("Cargo_Bay", 7, 8));
+        state.getPlayer().setMaxHearts(3);
+        state.getPlayer().setHearts(1);
 
         state.save(stateFile.toString());
 
@@ -89,6 +95,8 @@ class GameStateSerializationTest {
         assertEquals("Cargo_Bay", loaded.getPlayer().getPosition().getMap());
         assertEquals(7, loaded.getPlayer().getPosition().getX());
         assertEquals(8, loaded.getPlayer().getPosition().getY());
+        assertEquals(3, loaded.getPlayer().getMaxHearts());
+        assertEquals(1, loaded.getPlayer().getHearts());
     }
 }
 
