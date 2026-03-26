@@ -1,21 +1,10 @@
 player:
   name: Player
   icon: '@'
-  inventory:
-    - !key
-      name: Key of Kong
-      icon: k
-      id: 1
-      x: 0
-      y: 0
-    - !weapon
-      name: Small Dagger
-      icon: '!'
-      hitPoint: 12
-      x: 0
-      y: 0
+  color: "\u001B[32m"
+  inventory: [ ]
   position:
     map: Cargo_Bay
-    x: 0
-    y: 0
-  maxHP: 200
+    x: 20
+    y: 1
+  maxHP: 100

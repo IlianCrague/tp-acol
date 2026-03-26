@@ -29,7 +29,7 @@ Un incrément significatif du système devra être implémenté en Java ou C++. 
 n’est pas d’obtenir un logiciel complet, mais d’en développer une partie qui pourrait
 correspondre à une première version à livrer au client.
 
-## A rendre`
+## À rendre
 
 1. Cahier des charges.
 2. Document d’analyse.

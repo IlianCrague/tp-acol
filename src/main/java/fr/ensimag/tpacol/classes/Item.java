@@ -1,12 +1,12 @@
 package fr.ensimag.tpacol.classes;
 
 import fr.ensimag.tpacol.Displayable;
-import fr.ensimag.tpacol.Teleportable;
+import fr.ensimag.tpacol.Interactable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
 import lombok.Setter;
 
-public abstract class Item implements Displayable, Teleportable  {
+public abstract class Item implements Displayable, Interactable {
     private static final String ANSI_YELLOW = "\u001B[33m";
 
     @Getter
@@ -54,5 +54,19 @@ public abstract class Item implements Displayable, Teleportable  {
     @Override
     public String getTeleportLabel() {
         return name;
+    }
+
+    @Override
+    public String interact(Player player, Map currentMap) {
+        player.moveLeftOf(getX(), getY());
+        if (!currentMap.getElements().contains(this)) {
+            return "Nothing to pick up";
+        }
+
+        currentMap.removeElement(this);
+        setX(0);
+        setY(0);
+        player.addToInventory(this);
+        return "Picked up " + getName();
     }
 }

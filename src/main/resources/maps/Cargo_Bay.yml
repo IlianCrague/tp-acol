@@ -29,9 +29,12 @@ background: |
 elements:
   - !door
     id: 1
-    icon: d
+    icon: D
     x: 30
     y: 6
+    destinationMap: Engine_Room
+    destinationX: 3
+    destinationY: 3
   - !key
     name: Key
     icon: k

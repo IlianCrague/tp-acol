@@ -1,12 +1,12 @@
 package fr.ensimag.tpacol.classes;
 
 import fr.ensimag.tpacol.Displayable;
-import fr.ensimag.tpacol.Teleportable;
+import fr.ensimag.tpacol.Interactable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
 import lombok.Setter;
 
-public class NPC implements Displayable, Teleportable {
+public class NPC implements Displayable, Interactable {
 	private static final String ANSI_MAGENTA = "\u001B[35m";
 
 	@Getter

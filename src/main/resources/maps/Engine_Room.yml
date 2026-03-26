@@ -1,0 +1,35 @@
+name: Engine Room
+
+dimensions:
+  width: 40
+  height: 20
+
+background: |
+  ┌──────────────────────────────────────┐
+  │ ENGINE ROOM                          │
+  │                                      │
+  │  ╔══════════╗      ╔══════════════╗  │
+  │  ║ TURBINE  ║      ║ CONTROL PANEL║  │
+  │  ╚══════════╝      ╚══════════════╝  │
+  │                                      │
+  │           ~~~   POWER CORE   ~~~     │
+  │                                      │
+  │  CABLES: =======      =======        │
+  │                                      │
+  │  MAINTENANCE LOG: "STABLE"           │
+  │                                      │
+  │  RETURN AIRLOCK                      │
+  │                                      │
+  │                              EXIT    │
+  └──────────────────────────────────────┘
+
+elements:
+  - !door
+    id: 1
+    icon: E
+    x: 31
+    y: 15
+    destinationMap: Cargo_Bay
+    destinationX: 28
+    destinationY: 6
+

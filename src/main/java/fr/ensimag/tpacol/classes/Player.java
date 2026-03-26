@@ -9,6 +9,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 
 public class Player implements Displayable {
+	private static final String ANSI_RESET = "\u001B[0m";
+	private static final String ANSI_GREEN = "\u001B[32m";
+
 	@Getter
 	@Setter
 	private String name;
@@ -29,6 +32,10 @@ public class Player implements Displayable {
 	@Setter
 	private int maxHP;
 
+	@Getter
+	@Setter
+	private String color = ANSI_GREEN;
+
 	public Player() {
 		// Required by SnakeYAML JavaBean construction
 	}
@@ -43,8 +50,35 @@ public class Player implements Displayable {
 		this(name, "@", maxHP);
 	}
 
+	public void moveTo(int x, int y) {
+		position.setX(x);
+		position.setY(y);
+	}
+
+	public void moveLeftOf(int x, int y) {
+		moveTo(Math.max(0, x - 1), y);
+	}
+
+	public boolean hasKey(int keyId) {
+		return inventory.stream()
+				.filter(Key.class::isInstance)
+				.map(Key.class::cast)
+				.anyMatch(key -> key.getId() == keyId);
+	}
+
+	public void addToInventory(Item item) {
+		inventory.add(item);
+	}
+
+	public void teleportTo(String map, int x, int y) {
+		position.setMap(map);
+		position.setX(x);
+		position.setY(y);
+	}
+
 	public void display(TerminalDisplay display, int x, int y) {
-		display.write(icon, x + position.getX(), y + position.getY());
+		String tint = color == null ? "" : color;
+		display.write(tint + icon + ANSI_RESET, x + position.getX(), y + position.getY());
 	}
 
 }

@@ -1,12 +1,12 @@
 package fr.ensimag.tpacol.classes;
 
 import fr.ensimag.tpacol.Displayable;
-import fr.ensimag.tpacol.Teleportable;
+import fr.ensimag.tpacol.Interactable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Door implements Displayable, Teleportable {
+public class Door implements Displayable, Interactable {
     private static final String ANSI_CYAN = "\u001B[36m";
 
     /**
@@ -28,9 +28,22 @@ public class Door implements Displayable, Teleportable {
     @Setter
     private int y;
 
+    @Getter
+    @Setter
+    private String destinationMap;
+
+    @Getter
+    @Setter
+    private int destinationX;
+
+    @Getter
+    @Setter
+    private int destinationY;
+
     public Door() {
         // Required by SnakeYAML JavaBean construction
         this.icon = "d";
+        this.destinationMap = "";
     }
 
     public Door(int id, String icon, int x, int y) {
@@ -56,5 +69,21 @@ public class Door implements Displayable, Teleportable {
     @Override
     public String getTeleportLabel() {
         return "Door " + id;
+    }
+
+    @Override
+    public String interact(Player player, Map currentMap) {
+        player.moveLeftOf(getX(), getY());
+
+        if (!player.hasKey(id)) {
+            return "Door is locked (missing key " + id + ")";
+        }
+
+        if (destinationMap == null || destinationMap.isBlank()) {
+            return "Door opened";
+        }
+
+        player.teleportTo(destinationMap, destinationX, destinationY);
+        return "Door opened: " + destinationMap;
     }
 }

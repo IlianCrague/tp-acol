@@ -1,6 +1,7 @@
 package fr.ensimag.tpacol;
 
-import fr.ensimag.tpacol.classes.*;
+import fr.ensimag.tpacol.classes.Item;
+import fr.ensimag.tpacol.classes.Player;
 import fr.ensimag.tpacol.states.GameState;
 
 import java.io.BufferedReader;
@@ -13,32 +14,21 @@ public class Game {
 
     private final TerminalDisplay display;
     private final GameState gameState;
-    private final Map currentMap;
 
     public Game(TerminalDisplay display) {
         this.display = display;
 
         try {
             this.gameState = GameState.load();
-            this.currentMap = gameState.getCurrentMap();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private NPC findFirstNpc() {
-        for (Displayable element : currentMap.getElements()) {
-            if (element instanceof NPC npc) {
-                return npc;
-            }
-        }
-        return null;
-    }
-
-    private String buildTeleportPrompt(List<Teleportable> teleportTargets) {
+    private String buildTeleportPrompt(List<Interactable> teleportTargets) {
         StringBuilder promptBuilder = new StringBuilder("Teleport: ");
         for (int i = 0; i < teleportTargets.size(); i++) {
-            Teleportable target = teleportTargets.get(i);
+            Interactable target = teleportTargets.get(i);
             String label = target.colorize(target.getTeleportLabel());
             if (i > 0) {
                 promptBuilder.append(", ");
@@ -82,11 +72,36 @@ public class Game {
         }
     }
 
-    private List<Teleportable> buildTeleportTargets() {
-        List<Teleportable> teleportTargets = new ArrayList<>();
-        for (Displayable element : currentMap.getElements()) {
-            if (element instanceof Teleportable teleportable) {
-                teleportTargets.add(teleportable);
+    private void renderDialogOverlay(String title, String message) {
+        if (message == null || message.isBlank()) {
+            return;
+        }
+
+        List<String> lines = new ArrayList<>();
+        lines.add(title);
+        lines.add(message);
+
+        int contentWidth = 0;
+        for (String line : lines) {
+            contentWidth = Math.max(contentWidth, TerminalDisplay.getStringWidth(line));
+        }
+
+        int width = Math.max(16, contentWidth + 2);
+        int height = lines.size() + 2;
+        int x = 1;
+        int y = Math.max(1, 20 - height - 1);
+
+        display.draw_rectangle(x, y, width, height, true);
+        for (int i = 0; i < lines.size(); i++) {
+            display.write(lines.get(i), x + 1, y + 1 + i);
+        }
+    }
+
+    private List<Interactable> buildTeleportTargets() {
+        List<Interactable> teleportTargets = new ArrayList<>();
+        for (Displayable element : gameState.getCurrentMap().getElements()) {
+            if (element instanceof Interactable interactable) {
+                teleportTargets.add(interactable);
             }
         }
         return teleportTargets;
@@ -94,8 +109,7 @@ public class Game {
 
     private String handleTeleportInput(
             String input,
-            List<Teleportable> teleportTargets,
-            Player player,
+            List<Interactable> teleportTargets,
             boolean[] quitRequested
     ) {
         String normalized = input.trim().toLowerCase();
@@ -112,27 +126,17 @@ public class Game {
                 return "Choose a number between 1 and " + teleportTargets.size();
             }
 
-            Teleportable selected = teleportTargets.get(choice - 1);
-            int targetX, targetY;
-
-            targetX = selected.getX();
-            targetY = selected.getY();
-
-            int destinationX = Math.max(0, targetX - 1);
-            player.getPosition().setX(destinationX);
-            player.getPosition().setY(targetY);
+            Interactable selected = teleportTargets.get(choice - 1);
+            return gameState.interactWith(selected);
 
         } catch (NumberFormatException e) {
             return "Invalid input";
         }
-
-        return null;
     }
 
     public void run() throws Exception {
 
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
-        NPC npc = findFirstNpc();
 
         Thread saveOnShutdown = new Thread(() -> {
             try {
@@ -146,25 +150,24 @@ public class Game {
 
         boolean running = true;
         boolean showInventory = false;
+        String uiMessage = null;
 
         // BOUCLE DE JEU
         while (running) {
-
-            // Fight test uses the first NPC loaded from map data.
-            if (npc != null) {
-                var testFight = new Fight(gameState.getPlayer(), npc);
-                testFight.handleFight(display);
-            }
-
             gameState.display(display, 0, 0);
 
             if (showInventory) {
                 renderInventoryOverlay(gameState.getPlayer());
             }
 
+            if (uiMessage != null) {
+                renderDialogOverlay("Message", uiMessage);
+                uiMessage = null;
+            }
+
             display.render();
 
-            List<Teleportable> teleportTargets = buildTeleportTargets();
+            List<Interactable> teleportTargets = buildTeleportTargets();
             System.out.print("> " + buildTeleportPrompt(teleportTargets) + " ");
             String input = inputReader.readLine();
 
@@ -180,10 +183,7 @@ public class Game {
             }
 
             boolean[] quitRequested = new boolean[]{false};
-            String error = handleTeleportInput(input, teleportTargets, gameState.getPlayer(), quitRequested);
-            if (error != null) {
-                System.err.println("Invalid input: " + error);
-            }
+            uiMessage = handleTeleportInput(input, teleportTargets, quitRequested);
 
             if (quitRequested[0]) {
                 running = false;

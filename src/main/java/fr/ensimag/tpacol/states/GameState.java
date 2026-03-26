@@ -1,6 +1,7 @@
 package fr.ensimag.tpacol.states;
 
 import fr.ensimag.tpacol.Displayable;
+import fr.ensimag.tpacol.Interactable;
 import fr.ensimag.tpacol.Serialization;
 import fr.ensimag.tpacol.TerminalDisplay;
 import fr.ensimag.tpacol.classes.*;
@@ -50,6 +51,10 @@ public class GameState implements Displayable {
 
     public Map getCurrentMap() {
         return player.getPosition().getLoadedMap();
+    }
+
+    public String interactWith(Interactable target) {
+        return target.interact(player, getCurrentMap());
     }
 
     @Override

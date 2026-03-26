@@ -1,7 +1,9 @@
 package fr.ensimag.tpacol;
 
+import fr.ensimag.tpacol.classes.Map;
+import fr.ensimag.tpacol.classes.Player;
 
-public interface Teleportable {
+public interface Interactable {
     String ANSI_RESET = "\u001B[0m";
 
     int getX();
@@ -23,4 +25,8 @@ public interface Teleportable {
         return color + text + ANSI_RESET;
     }
 
+    default String interact(Player player, Map currentMap) {
+        player.moveLeftOf(getX(), getY());
+        return null;
+    }
 }
