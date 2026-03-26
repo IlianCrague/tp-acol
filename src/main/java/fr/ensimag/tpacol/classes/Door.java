@@ -1,12 +1,11 @@
 package fr.ensimag.tpacol.classes;
 
-import fr.ensimag.tpacol.Displayable;
 import fr.ensimag.tpacol.Interactable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Door implements Displayable, Interactable {
+public class Door implements Interactable {
     private static final String ANSI_CYAN = "\u001B[36m";
 
     /**

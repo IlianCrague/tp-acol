@@ -1,12 +1,11 @@
 package fr.ensimag.tpacol.classes;
 
-import fr.ensimag.tpacol.Displayable;
 import fr.ensimag.tpacol.Interactable;
 import fr.ensimag.tpacol.TerminalDisplay;
 import lombok.Getter;
 import lombok.Setter;
 
-public abstract class Item implements Displayable, Interactable {
+public abstract class Item implements Interactable {
     private static final String ANSI_YELLOW = "\u001B[33m";
 
     @Getter
