@@ -1,10 +1,4 @@
-documents_a_rendre/A_RENDRE.md : Toute la documentation dans un seul document
-documents_a_rendre/README.md : Listage succint des fichiers qu'il y avait à rendre et des fonctionalités principales du projet
-documents_a_rendre/analyse.md : Partie analyse de la documentation
-documents_a_rendre/bilan_outils.md : Partie bilan des outils de la documentation
-documents_a_rendre/cahier_des_charges.md : Partie cahier des charges de la documentation
-documents_a_rendre/conception.md : Partie conception de la documentation
-documents_a_rendre/manuel_utilisateur.md : Partie manuel utilisateur de la documentation
+ACOL.pdf : Toute la documentation dans un seul document
 
 gradle/* utilisé pour installer gradle
 
