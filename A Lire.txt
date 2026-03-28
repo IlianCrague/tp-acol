@@ -1,0 +1,36 @@
+documents_a_rendre/A_RENDRE.md : Toute la documentation dans un seul document
+documents_a_rendre/README.md : Listage succint des fichiers qu'il y avait à rendre et des fonctionalités principales du projet
+documents_a_rendre/analyse.md : Partie analyse de la documentation
+documents_a_rendre/bilan_outils.md : Partie bilan des outils de la documentation
+documents_a_rendre/cahier_des_charges.md : Partie cahier des charges de la documentation
+documents_a_rendre/conception.md : Partie conception de la documentation
+documents_a_rendre/manuel_utilisateur.md : Partie manuel utilisateur de la documentation
+
+gradle/* utilisé pour installer gradle
+
+src/main/* : le code source du projet
+src/test/* : les tests du projet
+
+build.gradle.kts : fichier de configuration gradle
+settings.gradle.kts : options du projet gradle
+
+gradlew : launcher gradle linux
+gradlew.bat : launcher gradle windows
+
+tp-acol-1.0-SNAPSHOT-all.jar : Fichier jar compilé du projet
+
+
+Compilation :
+Linux / MacOS
+
+./gradlew shadowJar
+
+Windows
+.\gradlew.bat shadowJar
+
+Execution : 
+Pour lancer la version qui vient d'être compilée
+java -jar build/libs/tp-acol-1.0-SNAPSHOT-all.jar
+
+Pour lancer la version à la racine :
+java -jar tp-acol-1.0-SNAPSHOT-all.jar
