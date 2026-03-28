@@ -28,7 +28,7 @@ Linux / MacOS
 Windows
 .\gradlew.bat shadowJar
 
-Execution : 
+Exécution : 
 Pour lancer la version qui vient d'être compilée
 java -jar build/libs/tp-acol-1.0-SNAPSHOT-all.jar
 
